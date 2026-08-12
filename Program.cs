@@ -1,6 +1,7 @@
 ﻿using vmbl.Source;
+using vmbl.Source.VM;
 
-if(args.Length == 0 || args.Length > 1)
+if (args.Length == 0 || args.Length > 1)
 {
     Console.WriteLine("Please, provide the script's file path");
     return;
@@ -8,4 +9,7 @@ if(args.Length == 0 || args.Length > 1)
 
 string content = File.ReadAllText(args[0]);
 
-Console.WriteLine(content);
+IVMStackLexer lexer = new VMStackLexer(content);
+List<Token> tokens = lexer.LexLoop();
+
+foreach(var token in tokens) Console.WriteLine(token.ToString());

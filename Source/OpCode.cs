@@ -1,43 +1,18 @@
 namespace vmbl.Source;
 
-public enum OpCode
+public enum OpCode : byte
 {
-    DEFINE, //defines something lol
-    QUERY,
-    NODE, //used with query/define to query or define a node
-    DEV, //used with query/define to query or define a dev
-    NEXT, //used with query for next project
-    PATH, //used with query for steps until next project
-    HALT //end
+    DEF = 0x01,
+    QUR = 0x02,
+    NOD = 0x30,
+    DEV = 0x31,
+    NEX = 0x32,
+    PAT = 0x33,
+    HALT = 0x00, //end
+    ERR = 0xFF
 }
-
-public enum Keywords
-{
-    COLON, //,
-    SEMICOLON, //;
-    OPENPARENTS, //(
-    CLOSEPARENTS, //)
-    OPENBRACKET, //[
-    CLOSEBRACKET, //]
-    EQUALS, //=
-    MINUS, //-
-    IDENT
-}
-
-public record Token
-(
-    OpCode Code,
-    Keywords? Keyword,
-    string Content
-){}
 
 public record Instruction(
-    Type Code,
+    OpCode Code,
     object[]? Params
 ){}
-
-public struct Type
-{
-    public OpCode? Code;
-    public Keywords? Keyword;
-}

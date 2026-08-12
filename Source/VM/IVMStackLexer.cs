@@ -2,9 +2,17 @@ namespace vmbl.Source.VM;
 
 public interface IVMStackLexer
 {
-    int Cursor { get; set; }
+    abstract char Peek(int cursor);
 
-    static abstract Instruction LexInstruct(IVMStackLexer lexer);
+    abstract Token LexInstruct(char character, ref int cursor);
 
-    static abstract Instruction[] LexLoop(IVMStackLexer lexer);
+    abstract List<Token> LexLoop();
+
+    abstract Token LexDigit(char character, ref int cursor);
+
+    abstract Token LexIdent(ref int cursor);
+
+    abstract Token LexQuotes(ref int cursor);
+
+    abstract Token LexRecursive(string source, ref int cursor);
 }

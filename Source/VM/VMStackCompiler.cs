@@ -23,7 +23,7 @@ internal class VMStackCompiler(string content) : IVMStackCompiler
     {
         while(compiler.Cursor < instructions.Length)
         {
-
+            
             compiler.Cursor++;
         }
     }
