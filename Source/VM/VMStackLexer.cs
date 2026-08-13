@@ -1,12 +1,10 @@
+using vmbl.Source.Utils;
+
 namespace vmbl.Source.VM;
 
 public class VMStackLexer(string Content) : IVMStackLexer
 {
-
-    public static bool AsciiPunct(char punctuation)
-    {
-        return punctuation is '(' or ')' or '[' or ']' or ',' or ';' or '=' or '-';
-    }
+    internal bool IsCursorNotForwardLength(int cursor) => cursor+1 < Content.Length;
 
     public char Peek(int cursor)
     {
@@ -20,10 +18,8 @@ public class VMStackLexer(string Content) : IVMStackLexer
             if(cType == Keywords.MINUS && Peek(cursor) == '-')
             {
                 // consume all until next \n
-                while(Content[cursor] != '\n')
-                {
+                while(IsCursorNotForwardLength(cursor) && Content[cursor] != '\n')
                     cursor++;
-                }
                 return LexInstruct(Content[cursor], ref cursor);
             }
             cursor++;
@@ -37,13 +33,10 @@ public class VMStackLexer(string Content) : IVMStackLexer
     public Token LexIdent(ref int cursor)
     {
         string word = "";
-        char curr = Content[cursor];
 
-        word += curr; // include the first char
-        while(curr != '\0')
+        while(IsCursorNotForwardLength(cursor) && LexUts.IsValidIdent(Content[cursor]))
         {
-            curr = Peek(cursor);            
-            word += curr;
+            word += Content[cursor];
             cursor++;
         }
 
@@ -57,13 +50,12 @@ public class VMStackLexer(string Content) : IVMStackLexer
         return new Token(Keywords.IDENT, word);
     }
 
-    public Token LexQuotes(ref int cursor)
+    public Token LexString(ref int cursor)
     {
         cursor++; // consume start quote
-        char startPoint = Content[cursor];
         string word = "";
 
-        while(startPoint != '"')
+        while(Content[cursor] != '"')
         {
             word += Content[cursor];
             cursor++;
@@ -71,6 +63,25 @@ public class VMStackLexer(string Content) : IVMStackLexer
 
         cursor++;
         return new Token(Keywords.STRING, word);
+    }
+
+    public Token LexNumber(ref int cursor)
+    {
+        string number = "";
+        while (LexUts.IsIntOrDouble(Content[cursor]))
+        {
+            number += Content[cursor];
+            cursor++;
+        }
+        
+        if(int.TryParse(number, out int n)) 
+            return new Token(Keywords.INT, n);
+
+        else if(double.TryParse(number, out double d))
+            return new Token(Keywords.DOUBLE, d);
+
+        else
+            return new Token(Keywords.UNKNOWN, "\0");
     }
 
     public Token LexRecursive(string content, ref int cursor)
@@ -84,7 +95,9 @@ public class VMStackLexer(string Content) : IVMStackLexer
         return character switch
         {
             var c when char.IsAsciiLetter(c) => LexIdent(ref cursor),
-            var c when AsciiPunct(c) => LexDigit(c, ref cursor),
+            var c when char.IsNumber(c) => LexNumber(ref cursor),
+            var c when LexUts.AsciiPunct(c) => LexDigit(c, ref cursor),
+            var c when c == '"' => LexString(ref cursor),
             var c when c == ' ' || c == '\n' || c == '\t' => LexRecursive(Content, ref cursor),
             _ => new Token(Keywords.HALT, "\0")
         };
@@ -96,10 +109,7 @@ public class VMStackLexer(string Content) : IVMStackLexer
         int cursor = 0;
 
         while(cursor < Content.Length)
-        {
             tokens.Add(LexInstruct(Content[cursor], ref cursor));
-            Console.WriteLine(cursor);
-        }
 
         return tokens;
     }
