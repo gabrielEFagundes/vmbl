@@ -2,12 +2,12 @@ using System.Collections.Frozen;
 
 namespace vmbl.Source;
 
-public enum Keywords
+public enum TokenTypes
 {
     DEFINE, //defines something lol
     QUERY,
     NODE, //used with query/define to query or define a node
-    DEV, //used with query/define to query or define a dev
+    OBJ, //used with query/define to query or define an object that is not part of the graph
     NEXT, //used with query for next project
     PATH, //used with query for steps until next project
     HALT, //end
@@ -36,35 +36,39 @@ public struct Value
     public static implicit operator Value(int v) => new(v);
     public static implicit operator Value(double v) => new(v);
 
+    public static implicit operator Value(string[] av) => new(av);
+    public static implicit operator Value(int[] av) => new(av);
+    public static implicit operator Value(double[] av) => new(av);
+
     public override string ToString() => _value.ToString() ?? string.Empty;
     public object AsObject() => _value;
 }
 
 public record Token
 (
-    Keywords Keyword,
+    TokenTypes TokenT,
     Value Content
 )
 {
-    public static readonly FrozenDictionary<string, Keywords> ReservedWords = new Dictionary<string, Keywords>
+    public static readonly FrozenDictionary<string, TokenTypes> ReservedWords = new Dictionary<string, TokenTypes>
     {
-        { "DEFINE", Keywords.DEFINE },
-        { "QUERY", Keywords.QUERY },
-        { "NODE", Keywords.NODE },
-        { "DEV", Keywords.DEV },
-        { "NEXT", Keywords.NEXT },
-        { "PATH", Keywords.PATH }
+        { "DEFINE", TokenTypes.DEFINE },
+        { "QUERY", TokenTypes.QUERY },
+        { "NODE", TokenTypes.NODE },
+        { "OBJ", TokenTypes.OBJ },
+        { "NEXT", TokenTypes.NEXT },
+        { "PATH", TokenTypes.PATH }
     }.ToFrozenDictionary();
 
-    public static readonly FrozenDictionary<char, Keywords> ReservedDigits = new Dictionary<char, Keywords>
+    public static readonly FrozenDictionary<char, TokenTypes> ReservedDigits = new Dictionary<char, TokenTypes>
     {
-        { '(', Keywords.OPENPARENTS },
-        { ')', Keywords.CLOSEPARENTS },
-        { '[', Keywords.OPENBRACKET },
-        { ']', Keywords.CLOSEBRACKET },
-        { ',', Keywords.COMMA },
-        { ';', Keywords.SEMICOLON },
-        { '=', Keywords.EQUALS },
-        { '-', Keywords.MINUS },
+        { '(', TokenTypes.OPENPARENTS },
+        { ')', TokenTypes.CLOSEPARENTS },
+        { '[', TokenTypes.OPENBRACKET },
+        { ']', TokenTypes.CLOSEBRACKET },
+        { ',', TokenTypes.COMMA },
+        { ';', TokenTypes.SEMICOLON },
+        { '=', TokenTypes.EQUALS },
+        { '-', TokenTypes.MINUS },
     }.ToFrozenDictionary();
 }

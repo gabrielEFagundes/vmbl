@@ -2,13 +2,17 @@ namespace vmbl.Source.VM;
 
 public interface IVMStackCompiler
 {
-    int Cursor { get; set; }
+    abstract void Expect(TokenTypes type);
 
-    static abstract void Expect(Type type);
+    abstract Token Peek();
 
-    static abstract object Peek();
+    abstract void ParseValues();
 
-    static abstract void Dispose();
+    abstract void ParseDefineStmt();
+    
+    abstract void ParseQueryStmt();
 
-    static abstract void Execute(IVMStackCompiler compiler, Instruction[] instructions);
+    abstract void ParseLoop(Token token);
+
+    abstract void Execute(Token[] tokens);
 }

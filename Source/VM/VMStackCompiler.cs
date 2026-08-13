@@ -1,30 +1,67 @@
+using System.Diagnostics;
+
 namespace vmbl.Source.VM;
 
-internal class VMStackCompiler(string content) : IVMStackCompiler
+internal class VMStackCompiler(Token[] Tokens) : IVMStackCompiler
 {
-    int IVMStackCompiler.Cursor { get; set; } = 0;
+    private int _cursor = 0;
 
-    public static void Expect(Type type)
+    internal bool IsCursorNotOutBounds() => _cursor+1 < Tokens.Length;
+    
+    public void Expect(TokenTypes keyword)
     {
-        throw new NotImplementedException();
+        if(Peek().TokenT == keyword) _cursor++;
+        throw new Exception($"expected {keyword}, found something else.");
     }
 
-    public static object Peek()
+    public Token Peek()
     {
-        throw new NotImplementedException();
+        return IsCursorNotOutBounds()?
+            Tokens[_cursor+1]
+            : Tokens[_cursor];
     }
 
-    public static void Dispose()
+    public Statement ParseValues()
     {
-        throw new NotImplementedException();
+        Expect(TokenTypes.IDENT);
+        Expect(TokenTypes.EQUALS);
+        // uh lowk
     }
 
-    public static void Execute(IVMStackCompiler compiler, Instruction[] instructions)
+    public Statement ParseDefineStmt()
     {
-        while(compiler.Cursor < instructions.Length)
+        if(Peek().TokenT != TokenTypes.NODE) Expect(TokenTypes.OBJ);
+        else Expect(TokenTypes.NODE);
+
+        Expect(TokenTypes.OPENPARENTS);
+
+        while(Tokens[_cursor].TokenT != TokenTypes.CLOSEPARENTS)
         {
-            
-            compiler.Cursor++;
+            ParseValues();
+        }
+    }
+
+    public Statement ParseQueryStmt()
+    {
+        
+    }
+
+    public Statement ParseLoop(Token token)
+    {
+        return token.TokenT switch
+        {
+            TokenTypes.DEFINE => ParseDefineStmt(),
+            TokenTypes.QUERY => ParseQueryStmt(),
+
+            _ => throw new UnreachableException($"parser reached an impossible state on token {token} (VMBL#2)")
+        };
+    }
+
+    public void Execute(Token[] tokens)
+    {
+        while (_cursor < tokens.Length)
+        {
+            ParseLoop(tokens[_cursor]);
         }
     }
 }
