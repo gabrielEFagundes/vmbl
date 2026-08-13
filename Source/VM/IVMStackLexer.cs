@@ -12,7 +12,9 @@ public interface IVMStackLexer
 
     abstract Token LexIdent(ref int cursor);
 
-    abstract Token LexQuotes(ref int cursor);
+    abstract Token LexString(ref int cursor);
+
+    abstract Token LexNumber(ref int cursor);
 
     abstract Token LexRecursive(string source, ref int cursor);
 }
