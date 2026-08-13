@@ -3,19 +3,17 @@ namespace vmbl.Source.Utils;
 public class LexUts
 {
     public static bool AsciiPunct(char punctuation)
-    {
-        return punctuation is '(' or ')' or '[' or ']' or ',' or ';' or '=' or '-';
-    }
+        => punctuation is '(' or ')' or '[' or ']' or ',' or ';' or '=' or '-';
 
     public static bool IsValidIdent(char letter)
-    {
-        return (letter >= 'a' && letter <= 'z') 
-            || (letter >= 'A' && letter <= 'Z')
-            || letter == '_';
-    }
+        => (letter >= 'a' && letter <= 'z') 
+        || (letter >= 'A' && letter <= 'Z')
+        || letter == '_';
 
     public static bool IsIntOrDouble(char number)
-    {
-        return char.IsNumber(number) || number == '.';
-    }
+        => char.IsNumber(number) || number == '.';
+
+    public static bool IsNonCharacter(char character) 
+        => character == '\n' || character == '\t' || character == ' ';
+    
 }

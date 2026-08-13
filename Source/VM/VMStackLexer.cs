@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using vmbl.Source.Utils;
 
 namespace vmbl.Source.VM;
@@ -18,7 +19,7 @@ public class VMStackLexer(string Content) : IVMStackLexer
             if(cType == Keywords.MINUS && Peek(cursor) == '-')
             {
                 // consume all until next \n
-                while(IsCursorNotForwardLength(cursor) && Content[cursor] != '\n')
+                while(IsCursorNotForwardLength(cursor) && (Content[cursor] != '\n' || Content[cursor] != '\0'))
                     cursor++;
                 return LexInstruct(Content[cursor], ref cursor);
             }
@@ -87,7 +88,9 @@ public class VMStackLexer(string Content) : IVMStackLexer
     public Token LexRecursive(string content, ref int cursor)
     {
         cursor++;
-        return LexInstruct(content[cursor], ref cursor);
+        return IsCursorNotForwardLength(cursor)? 
+            LexInstruct(content[cursor], ref cursor) 
+            : LexInstruct('\0', ref cursor);
     }
 
     public Token LexInstruct(char character, ref int cursor)
@@ -98,8 +101,10 @@ public class VMStackLexer(string Content) : IVMStackLexer
             var c when char.IsNumber(c) => LexNumber(ref cursor),
             var c when LexUts.AsciiPunct(c) => LexDigit(c, ref cursor),
             var c when c == '"' => LexString(ref cursor),
-            var c when c == ' ' || c == '\n' || c == '\t' => LexRecursive(Content, ref cursor),
-            _ => new Token(Keywords.HALT, "\0")
+            var c when LexUts.IsNonCharacter(c) => LexRecursive(Content, ref cursor),
+            '\0' => new Token(Keywords.HALT, "\0"),
+
+            _ => throw new UnreachableException($"Lexer reached an impossible state on char {character} (VMBL01)")
         };
     }
 
