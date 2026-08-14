@@ -7,9 +7,9 @@ DSL for Kalopsia interaction.
 
 ```plaintext
 DEFINE NODE (name="node"; difficulty=5, hours=20; req_skills=["", "", ""]; gain_skills=["", ""]);
-DEFINE DEV (skills=["", "", ""]);
+DEFINE OBJ (skills=["", "", ""]);
 
-QUERY NODE name="node"; -queries every single node with this name out there
+QUERY NODE name="node"; --queries every single node with this name out there
 ```
 
 ## Build executable:

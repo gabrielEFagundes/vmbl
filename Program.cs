@@ -7,9 +7,22 @@ if (args.Length == 0 || args.Length > 1)
     return;
 }
 
-string content = File.ReadAllText(args[0]);
+string content = File.ReadAllText(args[0]) + '\0';
 
+// TODO: enhance this lexer, it's kinda bad
 IVMStackLexer lexer = new VMStackLexer(content);
 List<Token> tokens = lexer.LexLoop();
 
-foreach(var token in tokens) Console.WriteLine(token.ToString());
+//foreach(var t in tokens) Console.WriteLine(t.ToString());
+
+IVMStackParser parser = new VMStackParser([.. tokens]);
+List<Statement> statements = [];
+try
+{
+    statements = parser.Execute();
+}catch(Exception e)
+{
+    Console.WriteLine(e);
+}
+
+foreach(var s in statements) Console.WriteLine(s.ToString());

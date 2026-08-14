@@ -8,15 +8,13 @@ public class VMStackLexer(string Content) : IVMStackLexer
     internal bool IsCursorNotForwardLength(int cursor) => cursor+1 < Content.Length;
 
     public char Peek(int cursor)
-    {
-        return cursor+1 < Content.Length ? Content[cursor+1] : '\0';
-    }
+        => cursor+1 < Content.Length ? Content[cursor+1] : '\0';
 
     public Token LexDigit(char c, ref int cursor)
     {
         if(Token.ReservedDigits.TryGetValue(c, out var cType))
         {
-            if(cType == Keywords.MINUS && Peek(cursor) == '-')
+            if(cType == TokenTypes.MINUS && Peek(cursor) == '-')
             {
                 // consume all until next \n
                 while(IsCursorNotForwardLength(cursor) && (Content[cursor] != '\n' || Content[cursor] != '\0'))
@@ -28,7 +26,7 @@ public class VMStackLexer(string Content) : IVMStackLexer
         }
 
         cursor++;
-        return new Token(Keywords.UNKNOWN, "\0");
+        return new Token(TokenTypes.UNKNOWN, "\0");
     }
 
     public Token LexIdent(ref int cursor)
@@ -47,8 +45,7 @@ public class VMStackLexer(string Content) : IVMStackLexer
             return new Token(keywordType, word);
         }
 
-        cursor++;
-        return new Token(Keywords.IDENT, word);
+        return new Token(TokenTypes.IDENT, word);
     }
 
     public Token LexString(ref int cursor)
@@ -63,7 +60,7 @@ public class VMStackLexer(string Content) : IVMStackLexer
         }
 
         cursor++;
-        return new Token(Keywords.STRING, word);
+        return new Token(TokenTypes.STRING, word);
     }
 
     public Token LexNumber(ref int cursor)
@@ -76,20 +73,26 @@ public class VMStackLexer(string Content) : IVMStackLexer
         }
         
         if(int.TryParse(number, out int n)) 
-            return new Token(Keywords.INT, n);
+            return new Token(TokenTypes.INT, n);
 
         else if(double.TryParse(number, out double d))
-            return new Token(Keywords.DOUBLE, d);
+            return new Token(TokenTypes.DOUBLE, d);
 
         else
-            return new Token(Keywords.UNKNOWN, "\0");
+            return new Token(TokenTypes.UNKNOWN, "\0");
     }
 
-    public Token LexRecursive(string content, ref int cursor)
+    public Token LexHalt(ref int cursor)
+    {
+        cursor++;
+        return new Token(TokenTypes.HALT, "\0");
+    }
+
+    public Token LexRecursive(ref int cursor)
     {
         cursor++;
         return IsCursorNotForwardLength(cursor)? 
-            LexInstruct(content[cursor], ref cursor) 
+            LexInstruct(Content[cursor], ref cursor) 
             : LexInstruct('\0', ref cursor);
     }
 
@@ -101,10 +104,10 @@ public class VMStackLexer(string Content) : IVMStackLexer
             var c when char.IsNumber(c) => LexNumber(ref cursor),
             var c when LexUts.AsciiPunct(c) => LexDigit(c, ref cursor),
             var c when c == '"' => LexString(ref cursor),
-            var c when LexUts.IsNonCharacter(c) => LexRecursive(Content, ref cursor),
-            '\0' => new Token(Keywords.HALT, "\0"),
+            var c when LexUts.IsNonCharacter(c) => LexRecursive(ref cursor),
+            '\0' => LexHalt(ref cursor),
 
-            _ => throw new UnreachableException($"Lexer reached an impossible state on char {character} (VMBL01)")
+            _ => throw new UnreachableException($"lexer reached an impossible state on char {character} (VMBL#1)")
         };
     }
 
