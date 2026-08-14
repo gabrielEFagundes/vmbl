@@ -117,9 +117,7 @@ public class VMStackLexer(string Content) : IVMStackLexer
         int cursor = 0;
 
         while(cursor < Content.Length)
-        {
             tokens.Add(LexInstruct(Content[cursor], ref cursor));
-        }
 
         return tokens;
     }

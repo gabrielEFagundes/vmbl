@@ -12,7 +12,6 @@ internal class VMStackParser(Token[] Tokens) : IVMStackParser
     public TokenTypes Expect(TokenTypes keyword)
     {
         TokenTypes next = Peek().TokenT;
-        //Console.WriteLine(keyword.ToString());
         if(next == keyword)
         {
             _cursor++;
@@ -24,7 +23,6 @@ internal class VMStackParser(Token[] Tokens) : IVMStackParser
     public TokenTypes ExpectEither(params TokenTypes[] types)
     {
         TokenTypes next = Peek().TokenT;
-        //Console.WriteLine(next.ToString());
         if(types.Contains(next))
         {
             _cursor++;

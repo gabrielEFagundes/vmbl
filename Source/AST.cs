@@ -18,9 +18,7 @@ public record DefineStmt(
 ) : Statement(TypeStatement)
 {
     public override string ToString()
-    {
-        return $"DefineStmt {{ TypeStatement = {TypeStatement}, TypeToCreate = {TypeToCreate}, Attributes = {string.Join(",", Attributes)} }}";
-    }
+    => $"DefineStmt {{ TypeStatement = {TypeStatement}, TypeToCreate = {TypeToCreate}, Attributes = {string.Join(",", Attributes)} }}";
 }
 
 public record QueryStmt(
