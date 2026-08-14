@@ -36,11 +36,14 @@ public struct Value
     public static implicit operator Value(int v) => new(v);
     public static implicit operator Value(double v) => new(v);
 
-    public static implicit operator Value(string[] av) => new(av);
-    public static implicit operator Value(int[] av) => new(av);
-    public static implicit operator Value(double[] av) => new(av);
+    public static implicit operator Value(List<Value> av) => new(av);
 
-    public override string ToString() => _value.ToString() ?? string.Empty;
+    public override string ToString(){
+        if(_value is List<Value> list)
+            return string.Join(", ", list);
+
+        return _value.ToString() ?? string.Empty;
+    }
     public object AsObject() => _value;
 }
 

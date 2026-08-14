@@ -7,17 +7,24 @@ public record Statement(
 ){}
 
 public record Attribution(
-    TokenTypes Key,
-    string Value
-) : Statement(Key){}
+    string Key,
+    Value Value
+){}
 
 public record DefineStmt(
     TokenTypes TypeStatement,
     TokenTypes TypeToCreate,
-    params Dictionary<string, Value>[] Values
-) : Statement(TypeStatement){}
+    List<Attribution> Attributes
+) : Statement(TypeStatement)
+{
+    public override string ToString()
+    {
+        return $"DefineStmt {{ TypeStatement = {TypeStatement}, TypeToCreate = {TypeToCreate}, Attributes = {string.Join(",", Attributes)} }}";
+    }
+}
 
 public record QueryStmt(
     TokenTypes TypeStatement,
-    string ValueToQuery
+    TokenTypes TypeToQuery,
+    Attribution ValueToQuery
 ) : Statement(TypeStatement){}

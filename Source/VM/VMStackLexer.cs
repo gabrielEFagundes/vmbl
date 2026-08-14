@@ -45,7 +45,6 @@ public class VMStackLexer(string Content) : IVMStackLexer
             return new Token(keywordType, word);
         }
 
-        cursor++;
         return new Token(TokenTypes.IDENT, word);
     }
 
@@ -83,11 +82,17 @@ public class VMStackLexer(string Content) : IVMStackLexer
             return new Token(TokenTypes.UNKNOWN, "\0");
     }
 
-    public Token LexRecursive(string content, ref int cursor)
+    public Token LexHalt(ref int cursor)
+    {
+        cursor++;
+        return new Token(TokenTypes.HALT, "\0");
+    }
+
+    public Token LexRecursive(ref int cursor)
     {
         cursor++;
         return IsCursorNotForwardLength(cursor)? 
-            LexInstruct(content[cursor], ref cursor) 
+            LexInstruct(Content[cursor], ref cursor) 
             : LexInstruct('\0', ref cursor);
     }
 
@@ -99,8 +104,8 @@ public class VMStackLexer(string Content) : IVMStackLexer
             var c when char.IsNumber(c) => LexNumber(ref cursor),
             var c when LexUts.AsciiPunct(c) => LexDigit(c, ref cursor),
             var c when c == '"' => LexString(ref cursor),
-            var c when LexUts.IsNonCharacter(c) => LexRecursive(Content, ref cursor),
-            '\0' => new Token(TokenTypes.HALT, "\0"), // TODO: halt doesn't appear when a comment is the last character from the source code.
+            var c when LexUts.IsNonCharacter(c) => LexRecursive(ref cursor),
+            '\0' => LexHalt(ref cursor),
 
             _ => throw new UnreachableException($"lexer reached an impossible state on char {character} (VMBL#1)")
         };
@@ -112,7 +117,9 @@ public class VMStackLexer(string Content) : IVMStackLexer
         int cursor = 0;
 
         while(cursor < Content.Length)
+        {
             tokens.Add(LexInstruct(Content[cursor], ref cursor));
+        }
 
         return tokens;
     }
