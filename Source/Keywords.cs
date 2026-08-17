@@ -29,8 +29,12 @@ public enum TokenTypes
 
 public struct Value
 {
-    private readonly object _value;
-    private Value(object value) => _value = value;
+    private object _value;
+    
+    private Value(string v) => _value = v;
+    private Value(int v) => _value = v;
+    private Value(double v) => _value = v;
+    private Value(List<Value> v) => _value = v;
 
     public static implicit operator Value(string v) => new(v);
     public static implicit operator Value(int v) => new(v);
@@ -44,7 +48,10 @@ public struct Value
 
         return _value.ToString() ?? string.Empty;
     }
-    public object AsObject() => _value;
+
+    public readonly bool IsList() => _value is List<Value>;
+
+    public object AsObject => _value;
 }
 
 public record Token
