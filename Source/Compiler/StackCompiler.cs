@@ -72,12 +72,16 @@ public class StackCompiler(List<Statement> statements) : IStackCompiler
             foreach(var d in define.Attributes)
                 if(d.Value.AsObject is List<Value> ls)
                 {
+                    EmitPush(_constants[d.Key]);
                     foreach(var l in ls)
                         EmitPush(_constants[l]);
                     EmitMkArray(ls.Count);
                 }
                 else
+                {
+                    EmitPush(_constants[d.Key]);
                     EmitPush(_constants[d.Value]);
+                }
             EmitDefine(define.Attributes.Count, define);
 
         }else if(statement is QueryStmt query)
