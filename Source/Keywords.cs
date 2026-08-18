@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using System.Diagnostics.CodeAnalysis;
 
 namespace vmbl.Source;
 
@@ -27,7 +28,7 @@ public enum TokenTypes
     IDENT
 }
 
-public struct Value
+public struct Value : IEquatable<Value>
 {
     private object _value;
     
@@ -49,9 +50,24 @@ public struct Value
         return _value.ToString() ?? string.Empty;
     }
 
-    public readonly bool IsList() => _value is List<Value>;
+    public bool Equals(Value other)
+    {
+        return _value.Equals(other._value);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Value v && Equals(v);
+    }
+
+    public override int GetHashCode()
+    {
+        return _value.GetHashCode();
+    }
 
     public object AsObject => _value;
+
+    public new Type GetType() => _value.GetType();
 }
 
 public record Token
