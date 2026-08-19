@@ -8,7 +8,7 @@ public class StackCompiler(List<Statement> statements) : IStackCompiler
     public Statement[] statements = [.. statements];
     private static readonly Stream _stream = new FileStream("compiled.ksc", FileMode.Create, FileAccess.ReadWrite);
     private readonly BinaryWriter _binaryWriter = new(_stream);
-    private static readonly ushort[] _headers = [(ushort)HeaderBytes.MGIC_VAL, (ushort)HeaderBytes.VERSION, (ushort)OpCode.PLACEHOLDER];
+    private static readonly ushort[] _headers = [(ushort)HeaderBytes.MGIC_VAL, (ushort)HeaderBytes.VERSION, (byte)OpCode.PLACEHOLDER];
     private static Dictionary<Value, int> _constants = [];
 
     public void MountConstantsTable(Statement statement)
@@ -42,27 +42,27 @@ public class StackCompiler(List<Statement> statements) : IStackCompiler
     }
 
     public void EmitPush(int index)
-        => CompilerUts.Write(_binaryWriter, [(ushort)OpCode.PUSH, (ushort)index]);
+        => CompilerUts.Write(_binaryWriter, [(byte)OpCode.PUSH, (byte)index]);
 
     public void EmitMkArray(int amount)
-        => CompilerUts.Write(_binaryWriter, [(ushort)OpCode.MK_ARRAY, (ushort)amount]);
+        => CompilerUts.Write(_binaryWriter, [(byte)OpCode.MK_ARRAY, (byte)amount]);
 
     public void EmitDefine(int amount, DefineStmt type)
     {
-        CompilerUts.Write(_binaryWriter, [(ushort)OpCode.DEFINE]);
+        CompilerUts.Write(_binaryWriter, [(byte)OpCode.DEFINE]);
         if(type.TypeToCreate == TokenTypes.NODE)
-            CompilerUts.Write(_binaryWriter, [(ushort)OpCode.NODE, (ushort)amount]);
+            CompilerUts.Write(_binaryWriter, [(byte)OpCode.NODE, (byte)amount]);
         else
-            CompilerUts.Write(_binaryWriter, [(ushort)OpCode.OBJ, (ushort)amount]);
+            CompilerUts.Write(_binaryWriter, [(byte)OpCode.OBJ, (byte)amount]);
     }
 
     public void EmitQuery(int amount, QueryStmt type)
     {
-        CompilerUts.Write(_binaryWriter, [(ushort)OpCode.QUERY]);
+        CompilerUts.Write(_binaryWriter, [(byte)OpCode.QUERY]);
         if(type.TypeToQuery == TokenTypes.NODE)
-            CompilerUts.Write(_binaryWriter, [(ushort)OpCode.NODE, (ushort)amount]);
+            CompilerUts.Write(_binaryWriter, [(byte)OpCode.NODE, (byte)amount]);
         else
-            CompilerUts.Write(_binaryWriter, [(ushort)OpCode.OBJ, (ushort)amount]);
+            CompilerUts.Write(_binaryWriter, [(byte)OpCode.OBJ, (byte)amount]);
     }
 
     public void Emit(Statement statement)
@@ -103,18 +103,15 @@ public class StackCompiler(List<Statement> statements) : IStackCompiler
 
     public void Compile()
     {
-        CompilerUts.Write(_binaryWriter, _headers);
+        CompilerUts.Write(_binaryWriter, 0, _headers);
 
         foreach(var statement in statements)
             MountConstantsTable(statement);
 
         foreach(var c in _constants)
-        {
             CompilerUts.WriteValue(_binaryWriter, c.Key);
-            Console.WriteLine(c.ToString());
-        }
 
-        CompilerUts.WriteAt(_binaryWriter, 4, [(ushort)_constants.Count]);
+        CompilerUts.Write(_binaryWriter, 4, [(ushort)_constants.Count]);
 
         foreach(var statement in statements)
             Emit(statement);

@@ -1,11 +1,10 @@
+using System.Buffers.Binary;
 using System.Runtime.InteropServices;
 
 namespace vmbl.Source.Utils;
 
 public class CompilerUts
 {
-    private static HashSet<Value> _nonRepeatingVals = [];
-
     public static Value WriteValue(BinaryWriter writer, Value value)
     {
         if (value.AsObject is string s) { writer.Write((byte)OpCode.STRING); writer.Write(s); }
@@ -17,19 +16,16 @@ public class CompilerUts
         return value;
     }
 
-    public static void WriteAt(BinaryWriter writer, uint offset, ushort[] bytes)
+    public static void Write(BinaryWriter writer, uint offset, ushort[] buffer)
     {
-        ReadOnlySpan<byte> byteSpan = MemoryMarshal.Cast<ushort, byte>(bytes);
+        ReadOnlySpan<byte> byteSpan = MemoryMarshal.Cast<ushort, byte>(buffer);
         writer.Seek((int)offset, SeekOrigin.Begin);
         writer.Write(byteSpan);
         writer.Seek(0, SeekOrigin.End);
     }
     
-    public static void Write(BinaryWriter writer, ushort[] bytes)
-    {
-        ReadOnlySpan<byte> byteSpan = MemoryMarshal.Cast<ushort, byte>(bytes);
-        writer.Write(byteSpan);
-    }
+    public static void Write(BinaryWriter writer, Span<byte> buffer)
+        => writer.Write(buffer);
 
     public static int RegisterConst(ref Dictionary<Value, int> consts, Value value)
     {
@@ -54,12 +50,5 @@ public class CompilerUts
         list.Clear();
         list.TrimExcess();
         list = null!;
-    }
-
-    public static void DisposeDataStruct<T>(ref HashSet<T> hash)
-    {
-        hash.Clear();
-        hash.TrimExcess();
-        hash = null!;
     }
 }

@@ -22,6 +22,5 @@ public enum OpCode : byte
     POP = 0x60,
     MK_ARRAY = 0x70,
     PLACEHOLDER = 0xAC,
-    HALT = 0x00, //end..? might remove
     ERR = 0xFF
 }
