@@ -1,4 +1,5 @@
 ﻿using vmbl.Source;
+using vmbl.Source.Compiler;
 using vmbl.Source.VM;
 
 if (args.Length == 0 || args.Length > 1)
@@ -26,3 +27,6 @@ try
 }
 
 foreach(var s in statements) Console.WriteLine(s.ToString());
+
+IStackCompiler compiler = new StackCompiler(statements);
+compiler.Compile();

@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using System.Diagnostics.CodeAnalysis;
 
 namespace vmbl.Source;
 
@@ -27,10 +28,14 @@ public enum TokenTypes
     IDENT
 }
 
-public struct Value
+public struct Value : IEquatable<Value>
 {
-    private readonly object _value;
-    private Value(object value) => _value = value;
+    private object _value;
+    
+    private Value(string v) => _value = v;
+    private Value(int v) => _value = v;
+    private Value(double v) => _value = v;
+    private Value(List<Value> v) => _value = v;
 
     public static implicit operator Value(string v) => new(v);
     public static implicit operator Value(int v) => new(v);
@@ -44,7 +49,25 @@ public struct Value
 
         return _value.ToString() ?? string.Empty;
     }
-    public object AsObject() => _value;
+
+    public bool Equals(Value other)
+    {
+        return _value.Equals(other._value);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Value v && Equals(v);
+    }
+
+    public override int GetHashCode()
+    {
+        return _value.GetHashCode();
+    }
+
+    public object AsObject => _value;
+
+    public new Type GetType() => _value.GetType();
 }
 
 public record Token
