@@ -1,0 +1,4 @@
+DEFINE NODE (name="node"; difficulty=5.5; hours=20; req_skills=["Skill", "Skill", "Skill"]; gain_skills=["Skill", "Skill"]);
+DEFINE OBJ (skills=["Skill 1", "Skill 1", "Another cool skill"]);
+
+QUERY NODE name="node"; --queries every single node with this name out there

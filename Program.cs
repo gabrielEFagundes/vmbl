@@ -14,6 +14,7 @@ string content = File.ReadAllText(args[0]) + '\0';
 IVMStackLexer lexer = new VMStackLexer(content);
 List<Token> tokens = lexer.LexLoop();
 
+// DEBUG only
 //foreach(var t in tokens) Console.WriteLine(t.ToString());
 
 IVMStackParser parser = new VMStackParser([.. tokens]);
@@ -26,7 +27,8 @@ try
     Console.WriteLine(e);
 }
 
-foreach(var s in statements) Console.WriteLine(s.ToString());
+// DEBUG only
+//foreach(var s in statements) Console.WriteLine(s.ToString());
 
 IStackCompiler compiler = new StackCompiler(statements);
 compiler.Compile();
