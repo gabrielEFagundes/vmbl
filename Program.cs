@@ -1,5 +1,6 @@
 ﻿using vmbl.Source;
 using vmbl.Source.Compiler;
+using vmbl.Source.Utils;
 using vmbl.Source.VM;
 
 if (args.Length == 0 || args.Length > 1)
@@ -10,7 +11,6 @@ if (args.Length == 0 || args.Length > 1)
 
 string content = File.ReadAllText(args[0]) + '\0';
 
-// TODO: enhance this lexer, it's kinda bad
 IVMStackLexer lexer = new VMStackLexer(content);
 List<Token> tokens = lexer.LexLoop();
 
@@ -30,5 +30,7 @@ try
 // DEBUG only
 //foreach(var s in statements) Console.WriteLine(s.ToString());
 
-IStackCompiler compiler = new StackCompiler(statements);
+IStackCompiler compiler = new StackCompiler(statements); // uh
+
+InternalUts.CreateTargetOutput();
 compiler.Compile();
