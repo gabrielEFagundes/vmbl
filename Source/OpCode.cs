@@ -12,6 +12,8 @@ public enum OpCode : byte
     QUERY = 0x02,
     NODE = 0x30,
     OBJ = 0x31,
+    PATH = 0x32,
+    NEXT = 0x33,
 
     STRING = 0x11,
     INT = 0x22,

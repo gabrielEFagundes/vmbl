@@ -18,7 +18,7 @@ IVMStackLexer lexer = new VMStackLexer(content);
 List<Token> tokens = lexer.LexLoop();
 
 // DEBUG only
-//foreach(var t in tokens) Console.WriteLine(t.ToString());
+// foreach(var t in tokens) Console.WriteLine(t.ToString());
 
 IVMStackParser parser = new VMStackParser([.. tokens]);
 List<Statement> statements = [];
@@ -31,7 +31,7 @@ try
 }
 
 // DEBUG only
-//foreach(var s in statements) Console.WriteLine(s.ToString());
+// foreach(var s in statements) Console.WriteLine(s.ToString());
 
 InternalUts.CreateTargetOutput();
 

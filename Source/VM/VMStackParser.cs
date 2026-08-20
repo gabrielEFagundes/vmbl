@@ -108,8 +108,12 @@ internal class VMStackParser(Token[] Tokens) : IVMStackParser
 
     public Statement ParseQueryStmt()
     {
-        TokenTypes type = ExpectEither(TokenTypes.NODE, TokenTypes.OBJ);
-        Attribution value = ParseAttribute();
+        TokenTypes type = ExpectEither(TokenTypes.NODE, TokenTypes.OBJ, TokenTypes.NEXT, TokenTypes.PATH);
+        if(type is TokenTypes.PATH) Expect(TokenTypes.TO);
+
+        Attribution value;
+        if(type is TokenTypes.NEXT) value = null!;
+        else value = ParseAttribute();
         
         _cursor++;
         return new QueryStmt(TokenTypes.QUERY, type, value);
