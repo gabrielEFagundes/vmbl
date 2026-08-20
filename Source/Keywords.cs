@@ -11,6 +11,7 @@ public enum TokenTypes
     OBJ, //used with query/define to query or define an object that is not part of the graph
     NEXT, //used with query for next project
     PATH, //used with query for steps until next project
+    TO, //used with path, pretty print
     HALT, //end
     UNKNOWN,
     COMMA, //,
@@ -83,7 +84,8 @@ public record Token
         { "NODE", TokenTypes.NODE },
         { "OBJ", TokenTypes.OBJ },
         { "NEXT", TokenTypes.NEXT },
-        { "PATH", TokenTypes.PATH }
+        { "PATH", TokenTypes.PATH },
+        { "TO", TokenTypes.TO }
     }.ToFrozenDictionary();
 
     public static readonly FrozenDictionary<char, TokenTypes> ReservedDigits = new Dictionary<char, TokenTypes>

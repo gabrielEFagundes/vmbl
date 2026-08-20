@@ -33,7 +33,7 @@ public class StackCompiler(List<Statement> statements) : IStackCompiler
                 }
             }
         }
-        else if(statement is QueryStmt qry 
+        else if(statement is QueryStmt qry && qry.ValueToQuery != null
             && (!_constants.ContainsKey(qry.ValueToQuery.Value) || !_constants.ContainsKey(qry.ValueToQuery.Key)))
         {
             CompilerUts.RegisterConst(ref _constants, qry.ValueToQuery.Key);
@@ -61,8 +61,14 @@ public class StackCompiler(List<Statement> statements) : IStackCompiler
         CompilerUts.Write(_binaryWriter, [(byte)OpCode.QUERY]);
         if(type.TypeToQuery == TokenTypes.NODE)
             CompilerUts.Write(_binaryWriter, [(byte)OpCode.NODE, (byte)amount]);
-        else
+
+        else if(type.TypeToQuery == TokenTypes.OBJ)
             CompilerUts.Write(_binaryWriter, [(byte)OpCode.OBJ, (byte)amount]);
+
+        else if(type.TypeToQuery == TokenTypes.PATH)
+            CompilerUts.Write(_binaryWriter, [(byte)OpCode.PATH, (byte)amount]);
+
+        else CompilerUts.Write(_binaryWriter, [(byte)OpCode.NEXT]);
     }
 
     public void Emit(Statement statement)
@@ -86,9 +92,13 @@ public class StackCompiler(List<Statement> statements) : IStackCompiler
 
         }else if(statement is QueryStmt query)
         {
-            EmitPush(_constants[query.ValueToQuery.Key]);
-            EmitPush(_constants[query.ValueToQuery.Value]);
-            EmitQuery(1, query);
+            if(query.TypeToQuery == TokenTypes.NEXT) EmitQuery(0, query);
+            else
+            {
+                EmitPush(_constants[query.ValueToQuery.Key]);
+                EmitPush(_constants[query.ValueToQuery.Value]);
+                EmitQuery(1, query);
+            }
         }else
             throw new UnreachableException($"compiler reached an impossible state at {statement} (VMBL#3)");
         
