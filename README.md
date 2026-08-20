@@ -2,7 +2,7 @@
 
 Virtual Machine Based Language... I'm terrible with names
 
-DSL for Kalopsia interaction.
+Lightning fast DSL for Kalopsia interaction.
 
 ## Brief example:
 
@@ -28,5 +28,36 @@ VMBL is compiled to bytecode, which is read by the VM embedded into Kalopsia to 
 
 Compile the source code to an executable:
 ```bash
-
+dotnet publish -r win-x64 -c Release
+# or...
+dotnet publish -r linux-x64 -c Release
+# or even...
+dotnet publish -r osx-arm64 -c Release
 ```
+
+Then, simply run vmbl with the path to your script on the terminal:
+```bash
+vmbl /path/to/script.vmbl
+```
+
+By default, your output folder (with the compiled file) will be on `/out/target.ksc`
+
+You can change that by parsing a flag when compiling your vmbl script:
+```
+vmbl /path/to/script.vmbl -o /your/own/custom/path
+```
+
+To learn more about the available flags, see [the documentation](/docs)
+
+## Developing
+
+Before contributing and sending your PR, you must build the project yourself to test it out:
+```bash
+dotnet build -o ./dist --no-self-contained -r win-x64
+# or...
+dotnet build -o ./dist --no-self-contained -r linux-x64
+# or even...
+dotnet build -o ./dist --no-self-contained -r osx-arm64
+```
+
+This will build the project, without DLLs, inside a `dist` folder, on your working directory.

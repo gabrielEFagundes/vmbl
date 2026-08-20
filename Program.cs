@@ -1,7 +1,10 @@
-﻿using vmbl.Source;
+﻿using System.Diagnostics;
+using vmbl.Source;
 using vmbl.Source.Compiler;
 using vmbl.Source.Utils;
 using vmbl.Source.VM;
+
+Stopwatch stopwatch = Stopwatch.StartNew();
 
 if (args.Length == 0 || args.Length > 1)
 {
@@ -30,7 +33,10 @@ try
 // DEBUG only
 //foreach(var s in statements) Console.WriteLine(s.ToString());
 
-IStackCompiler compiler = new StackCompiler(statements); // uh
-
 InternalUts.CreateTargetOutput();
+
+IStackCompiler compiler = new StackCompiler(statements);
 compiler.Compile();
+
+stopwatch.Stop();
+InternalUts.CreateBufferedWriter($"build finished in {stopwatch.ElapsedMilliseconds}ms");

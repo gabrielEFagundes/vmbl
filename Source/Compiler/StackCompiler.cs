@@ -6,7 +6,7 @@ namespace vmbl.Source.Compiler;
 public class StackCompiler(List<Statement> statements) : IStackCompiler
 {
     public Statement[] statements = [.. statements];
-    private static readonly Stream _stream = new FileStream("/out/target.ksc", FileMode.Create, FileAccess.ReadWrite);
+    private static readonly Stream _stream = new FileStream("out/target.ksc", FileMode.Create, FileAccess.ReadWrite);
     private readonly BinaryWriter _binaryWriter = new(_stream);
     private static readonly ushort[] _headers = [(ushort)HeaderBytes.MGIC_VAL, (ushort)HeaderBytes.VERSION, (byte)OpCode.PLACEHOLDER];
     private static Dictionary<Value, int> _constants = [];
