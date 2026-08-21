@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using vmbl;
 using vmbl.Lib;
 using vmbl.Source;
 using vmbl.Source.Compiler;
@@ -8,22 +9,17 @@ using vmbl.Source.VM;
 Stopwatch stopwatch = Stopwatch.StartNew();
 
 try{
-    string[] file = Args.Verify(args);
+    _ = new Defaults(); // initialize configurations
+    string file = new Args().ParseArgs(args).GetPathOrDoSomething();
 
-    string content = File.ReadAllText(file[0]) + '\0';
+    string content = File.ReadAllText(file) + '\0';
 
     IVMStackLexer lexer = new VMStackLexer(content);
     List<Token> tokens = lexer.LexLoop();
 
-    // DEBUG only
-    // foreach(var t in tokens) Console.WriteLine(t.ToString());
-
     IVMStackParser parser = new VMStackParser([.. tokens]);
     List<Statement> statements = [];
     statements = parser.Execute();
-
-    // DEBUG only
-    // foreach(var s in statements) Console.WriteLine(s.ToString());
 
     InternalUts.CreateTargetOutput();
 
@@ -35,6 +31,6 @@ try{
 }catch(Exception e)
 {
     stopwatch.Stop();
-    InternalUts.CreateBufferedWriter($"build failed: ${e.StackTrace ?? "No stacktrace available"}");
+    InternalUts.CreateBufferedWriter($"build failed: {e.Message}");
     Environment.FailFast($"in {stopwatch.ElapsedMilliseconds}ms");
 }
