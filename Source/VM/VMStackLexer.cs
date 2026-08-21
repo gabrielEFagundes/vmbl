@@ -17,7 +17,7 @@ public class VMStackLexer(string Content) : IVMStackLexer
             if(cType == TokenTypes.MINUS && Peek(cursor) == '-')
             {
                 // consume all until next \n
-                while(IsCursorNotForwardLength(cursor) && (Content[cursor] != '\n' || Content[cursor] != '\0'))
+                while(IsCursorNotForwardLength(cursor) && (Content[cursor] != '\n'))
                     cursor++;
                 return LexInstruct(Content[cursor], ref cursor);
             }

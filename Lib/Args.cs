@@ -4,8 +4,7 @@ namespace vmbl.Lib;
 
 internal class Args
 {
-    private string[]? _inputArgs { get; set; }
-    private static string[] _internalArgs = ["-o", "-h", "--help", "-v", "--version"];
+    private string[] _inputArgs { get; set; } = [];
 
     public Args ParseArgs(string[] args)
     {
@@ -19,17 +18,27 @@ internal class Args
         return this;
     }
 
-    public void DoSomething()
+    public string GetPathOrDoSomething()
     {
-        if(_inputArgs != null && _inputArgs.FirstOrDefault(arg => _internalArgs.Contains(arg)) != null)
-            for(int i = 0; i < _inputArgs.Length; i++)
+        
+        for(int i = 0; i < _inputArgs.Length; i++)
+        {
+            switch (_inputArgs[i])
             {
-                // I'm tired
-                _ = _inputArgs[i] switch
-                {
-                    "-h" => null,
-                    _ => default
-                };
+                case "-v":
+                case "--version":
+                    InternalUts.CreateBufferedWriter($"VMBL version {Defaults.Version}\nby {Defaults.Author}");
+                    Environment.Exit(0);
+                    break;
+
+                case "-h":
+                case "--help":
+                case "?":
+                    InternalUts.CreateBufferedWriter("VMBL\n\t-h / --help: help\n\t-v / --version: current installed version");
+                    Environment.Exit(0);
+                    break;
             }
+        }
+        return _inputArgs[0]; // always the script's path
     }
 }
