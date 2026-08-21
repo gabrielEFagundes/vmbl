@@ -5,6 +5,10 @@ namespace vmbl.Source.Utils;
 
 public class CompilerUts
 {
+    /// <summary>
+    /// Writes a Value in its binary form to a stream, usually a FileStream, 
+    /// where the bytecode goes to.
+    /// </summary>
     public static Value WriteValue(BinaryWriter writer, Value value)
     {
         if (value.AsObject is string s) { writer.Write((byte)OpCode.STRING); writer.Write(s); }
@@ -16,6 +20,10 @@ public class CompilerUts
         return value;
     }
 
+    /// <summary> Writes an array of ushorts to a stream, usually a FileStream. </summary>
+    /// <param name="writer">The binary writer</param>
+    /// <param name="offset">The offset from the beggining of the stream</param>
+    /// <param name="buffer">The array buffer of ushorts</param>
     public static void Write(BinaryWriter writer, uint offset, ushort[] buffer)
     {
         ReadOnlySpan<byte> byteSpan = MemoryMarshal.Cast<ushort, byte>(buffer);
@@ -24,9 +32,16 @@ public class CompilerUts
         writer.Seek(0, SeekOrigin.End);
     }
     
+    /// <summary> Writes a Span of bytes to a stream, usually a FileStream. </summary>
+    /// <param name="writer">The binary writer</param>
+    /// <param name="buffer">The Span (array) buffer of bytes</param>
     public static void Write(BinaryWriter writer, Span<byte> buffer)
         => writer.Write(buffer);
 
+    /// <summary>
+    /// Adds a constant to the constants table loaded inside a Dictionary.
+    /// Ignores duplicates.
+    /// </summary>
     public static int RegisterConst(ref Dictionary<Value, int> consts, Value value)
     {
         if(consts.TryGetValue(value, out int index))
@@ -36,15 +51,9 @@ public class CompilerUts
         return index;
     }
 
-    public static int RegisterConst(ref Dictionary<Value, int> consts, string value)
-    {
-        if(consts.TryGetValue(value, out int index))
-            return index;
-        index = consts.Count;
-        consts[value] = index;
-        return index;
-    }
-
+    /// <summary>
+    /// Disposes the referentied data structure, on the use case of VMBL, only a Dictionary overload is available.
+    /// </summary>
     public static void DisposeDataStruct<TK, TV>(ref Dictionary<TK, TV> list) where TK : notnull
     {
         list.Clear();

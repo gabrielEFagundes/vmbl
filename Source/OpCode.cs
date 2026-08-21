@@ -1,11 +1,13 @@
 namespace vmbl.Source;
 
+/// <summary> The header bytes for the bytecode file, used to identify if the compiled bytecode is or isn't a VMBL source. </summary>
 public enum HeaderBytes : ushort
 {
     MGIC_VAL = 0xDEAF,
     VERSION = 0xA01
 }
 
+/// <summary> The defined bytes used for each instruction on the bytecode. </summary>
 public enum OpCode : byte
 {
     DEFINE = 0x01,
@@ -19,10 +21,9 @@ public enum OpCode : byte
     INT = 0x22,
     DOUBLE = 0x33,
 
-    INDEX = 0x40,
     PUSH = 0x50,
     POP = 0x60,
     MK_ARRAY = 0x70,
     PLACEHOLDER = 0xAC,
-    ERR = 0xFF
+    ERR = 0xFF // probably deprecated, no use at all for now.
 }
