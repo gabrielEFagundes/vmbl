@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="973" height="195" alt="Group 2" src="https://github.com/user-attachments/assets/f9194c9f-6f0b-4a90-9731-b58ef2de0ea9" />
+  <img width="973" height="195" alt="Group 2 (1)" src="https://github.com/user-attachments/assets/fd73da1f-baaf-4690-8d69-c2b5e528b865" />
   <br>
   <sub><b>Lightning fast</b> DSL for Kalopsia interaction.</sub>
 </div>
