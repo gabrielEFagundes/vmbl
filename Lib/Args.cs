@@ -37,6 +37,9 @@ internal class Args
                     InternalUts.CreateBufferedWriter("VMBL\n\t-h / --help: help\n\t-v / --version: current installed version");
                     Environment.Exit(0);
                     break;
+                case "-o":
+                    // TODO
+                    break;
             }
         }
         return _inputArgs[0]; // always the script's path

@@ -2,7 +2,7 @@
 
 Virtual Machine Based Language... I'm terrible with names
 
-Lightning fast DSL for Kalopsia interaction.
+No dependency, lightning fast DSL for Kalopsia interaction.
 
 ## Brief example:
 
